@@ -1,0 +1,9 @@
+{
+    "label": "binaryClass", 
+     "missing_value": "?",
+     "clean_type": "missing value", 
+     "missing number": "1133", 
+     "missing rate": "3.2%", 
+     "best_acc": "0.844", 
+     "instance":"1945"
+ }
