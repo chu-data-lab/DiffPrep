@@ -11,6 +11,8 @@ from trainer.diffprep_trainer import DiffPrepSGD
 from utils import SummaryWriter
 from .experiment_utils import min_max_normalize
 from copy import deepcopy
+from utils import logits_to_probs
+import pprint
 
 class DiffPrepExperiment(object):
     """Run auto prep with one set of hyper parameters"""
@@ -28,8 +30,8 @@ class DiffPrepExperiment(object):
         # pre norm for diffprep flex
         if self.method == "diffprep_flex":
             X_train, X_val, X_test = min_max_normalize(X_train, X_val, X_test)
-            params["patience"] = 10
-            params["num_epochs"] = 3000
+        params["patience"] = 2
+        params["num_epochs"] = 10
 
         # set random seed
         set_random_seed(params)
@@ -110,5 +112,14 @@ def run_diffprep(data_dir, dataset, result_dir, prep_space, params, model_name, 
     sample = "sample" if params["sample"] else "nosample"
     diff_prep_exp = DiffPrepExperiment(data_dir, dataset, prep_space, model_name, method)
     best_result, best_model, best_logger, best_params = grid_search(diff_prep_exp, deepcopy(params))
+    dict = {}
+    logits = [dict.update({key: np.argmax(values, axis=1)}) for key, values in best_model['prep_pipeline'].items()]
+    # print(logits_to_probs(torch.FloatTensor(logits[0])))
+    print(dict['alpha'])
+    print("\n")
+    p = pprint.PrettyPrinter(width=41)
+    p.pprint([(key, logits_to_probs(values)) for key, values in best_model['prep_pipeline'].items() if key != 'alpha'])
+    # pipe_line = [np.argmax(values, axis=1) for key, values in best_model['prep_pipeline'].items()]
+    # print(np.unique(pipe_line[0], return_counts=True, axis=0))
     save_result(best_result, best_model, best_logger, best_params, result_dir, save_model=False)
     print("DiffPrep Finished. val acc:", best_result["best_val_acc"], "test acc", best_result["best_test_acc"])

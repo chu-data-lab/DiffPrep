@@ -1,0 +1,23 @@
+{
+    "num_epochs": 10,
+    "batch_size": 512,
+    "device": "cpu",
+    "weight_decay": 0,
+    "model": "log",
+    "train_seed": 1,
+    "split_seed": 1,
+    "method": "diffprep_fix",
+    "save_model": true,
+    "logging": false,
+    "no_crash": false,
+    "patience": 2,
+    "momentum": 0.9,
+    "prep_lr": null,
+    "temperature": 0.1,
+    "grad_clip": null,
+    "pipeline_update_sample_size": 512,
+    "init_method": "default",
+    "diff_method": "num_diff",
+    "sample": false,
+    "model_lr": 0.01
+}

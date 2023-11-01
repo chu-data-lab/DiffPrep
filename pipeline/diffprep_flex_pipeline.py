@@ -454,7 +454,7 @@ class DiffPrepFlexPipeline(nn.Module):
                                           init_tf=init_tf, diff_method=self.diff_method, beta=tf_prob_logits)
                 pipeline.append(transformer)
                 idx += 1
-
+        
         self.pipeline = nn.ModuleList(pipeline)
         # self.pipeline = nn.ModuleList([pipeline[i] for i in [0, 1, 5, 9]])
         self.out_features = in_features
