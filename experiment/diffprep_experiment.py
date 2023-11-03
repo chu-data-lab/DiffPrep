@@ -115,12 +115,12 @@ def run_diffprep(data_dir, dataset, result_dir, prep_space, params, model_name, 
     diff_prep_exp = DiffPrepExperiment(data_dir, dataset, prep_space, model_name, method)
     best_result, best_model, best_logger, best_params = grid_search(diff_prep_exp, deepcopy(params))
     dict = {}
-    logits = [dict.update({key: np.argmax(values, axis=1)}) for key, values in best_model['prep_pipeline'].items()]
+    logits = [dict.update({key: values}) for key, values in best_model['prep_pipeline'].items()]
     # print(logits_to_probs(torch.FloatTensor(logits[0])))
     # print(dict)
     save_lr_and_pipelines(best_params["model_lr"], dict, result_dir)
-    p = pprint.PrettyPrinter(width=41)
-    p.pprint([(key, logits_to_probs(values)) for key, values in best_model['prep_pipeline'].items() if key != 'alpha'])
+    # p = pprint.PrettyPrinter(width=41)
+    # p.pprint([(key, logits_to_probs(values)) for key, values in best_model['prep_pipeline'].items() if key != 'alpha'])
     # pipe_line = [np.argmax(values, axis=1) for key, values in best_model['prep_pipeline'].items()]
     # print(np.unique(pipe_line[0], return_counts=True, axis=0))
     save_result(best_result, best_model, best_logger, best_params, result_dir, save_model=False)
@@ -145,7 +145,6 @@ def save_lr_and_pipelines(lr, pipeline_dict, save_dir):
 
     # Convert the data to a dictionary for saving
     data_to_save_dict = {key: tensor_to_list(value) for key, value in data_with_probs}
-
     # Decide the filename extension, json is a good format for structured data
     file_path = os.path.join(save_dir, 'bestpipelines.json')
   
@@ -158,11 +157,12 @@ def save_lr_and_pipelines(lr, pipeline_dict, save_dir):
     elif lr == 0.001:
         keys_to_save += ['pipeline.7.tf_prob_logits', 'pipeline.8.tf_prob_logits', 'pipeline.9.tf_prob_logits']
     
+    # print(data_to_save_dict)
     # Extract the relevant data from the dictionary
     data_to_save = {key: data_to_save_dict[key] for key in keys_to_save if key in data_to_save_dict}
-
+    # print(data_to_save)
     # Write the data to a file in the specified directory
     with open(file_path, 'w') as f:
         json.dump(data_to_save, f, indent=4)
     
-    print(f"Data saved to {file_path}")
+    # print(f"Data saved to {file_path}")

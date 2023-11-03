@@ -410,7 +410,7 @@ class DiffPrepFlexPipeline(nn.Module):
         first_transformer.pre_cache(X_test, "test")
 
         pipeline.append(first_transformer)
-        print(X_train)
+        # print(X_train)
         # other transformers
         in_features = first_transformer.out_features
 
