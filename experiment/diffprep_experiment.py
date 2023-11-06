@@ -163,6 +163,9 @@ def save_lr_and_pipelines(lr, pipeline_dict, save_dir):
     # print(data_to_save)
     # Write the data to a file in the specified directory
     with open(file_path, 'w') as f:
-        json.dump(data_to_save, f, indent=4)
-    
+        count = 0
+        for key, value in data_to_save.items():
+            f.write(key + ": ")
+            f.write(str(value))
+            f.write("\n")
     # print(f"Data saved to {file_path}")
