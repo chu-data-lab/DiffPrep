@@ -32,8 +32,8 @@ class DiffPrepExperiment(object):
         # pre norm for diffprep flex
         if self.method == "diffprep_flex":
             X_train, X_val, X_test = min_max_normalize(X_train, X_val, X_test)
-        params["patience"] = 2
-        params["num_epochs"] = 10
+        params["patience"] = 10
+        params["num_epochs"] = 3000
         
         # set random seed
         set_random_seed(params)
