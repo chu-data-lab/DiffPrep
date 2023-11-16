@@ -75,10 +75,14 @@ def remove_large_cat(X):
     X = X[columns]
     return X
 
-def build_data(X, y, random_state=1):
-    label_enc = LabelEncoder()
-    y_enc = label_enc.fit_transform(y.values.ravel())
-    y_enc = torch.tensor(y_enc).long()
+def build_data(X, y, task, random_state=1):
+    if task == "classification":
+        label_enc = LabelEncoder()
+        y_enc = label_enc.fit_transform(y.values.ravel())
+        y_enc = torch.tensor(y_enc).long()
+    else:
+        y_enc = torch.tensor(y.values.ravel()).float()
+        y_enc = torch.reshape(y_enc, (-1,))
     
     X = remove_large_cat(X)
     # print("Data size:", X.shape)
@@ -112,6 +116,9 @@ def min_max_normalize(X_train, X_val, X_test):
     X_val = pd.concat([X_val_num_norm, X_val_cat], axis=1)[X_train.columns]
     X_test = pd.concat([X_test_num_norm, X_test_cat], axis=1)[X_train.columns]
     return X_train, X_val, X_test
+
+def min_max_y(y):
+    return (y - y.min() ) / ( y.max() - y.min())
 
 def load_info(info_dir):
     info_path = os.path.join(info_dir, "info.json")

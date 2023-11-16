@@ -9,7 +9,7 @@ import torch
 import torch.nn as nn
 from trainer.diffprep_trainer import DiffPrepSGD
 from utils import SummaryWriter
-from .experiment_utils import min_max_normalize
+from .experiment_utils import min_max_normalize, min_max_y
 from copy import deepcopy
 from utils import logits_to_probs
 import pprint
@@ -25,13 +25,17 @@ class DiffPrepExperiment(object):
         self.model_name = model_name
         self.method = method
 
-    def run(self, params, verbose=True):        
+    def run(self, params, verbose=True):
         X, y = load_data(self.data_dir, self.dataset)
-        X_train, y_train, X_val, y_val, X_test, y_test = build_data(X, y, random_state=params["split_seed"])
+        task = params["task"]
+        X_train, y_train, X_val, y_val, X_test, y_test = build_data(X, y, task, random_state=params["split_seed"])
         
         # pre norm for diffprep flex
         if self.method == "diffprep_flex":
             X_train, X_val, X_test = min_max_normalize(X_train, X_val, X_test)
+        if params["task"] == "regression":
+            y_train, y_val, y_test = min_max_y(y_train), min_max_y(y_val), min_max_y(y_test)
+
         params["patience"] = 10
         params["num_epochs"] = 3000
         
@@ -58,19 +62,31 @@ class DiffPrepExperiment(object):
 
         # model
         input_dim = prep_pipeline.out_features
-        output_dim = len(set(y.values.ravel()))
+        if params["task"] == "classification":
+            output_dim = len(set(y.values.ravel()))
+        else:
+            # As of now only added support for regression
+            output_dim = 1
 
         # model = TwoLayerNet(input_dim, output_dim)
         set_random_seed(params)
         if self.model_name == "log":
             model = LogisticRegression(input_dim, output_dim)
+        elif self.model_name == "reg":
+            print(input_dim)
+            model = torch.nn.Sequential(torch.nn.Linear(input_dim, 4),
+                                        torch.nn.GELU(),
+                                        torch.nn.Linear(4, 1))
         else:
             raise Exception("Wrong model")
 
         model = model.to(params["device"])
 
         # loss
-        loss_fn = nn.CrossEntropyLoss()
+        if params["task"] == "regression":
+            loss_fn = nn.MSELoss()
+        else:
+            loss_fn = nn.CrossEntropyLoss()
 
         # optimizer
         model_optimizer = torch.optim.SGD(
@@ -109,7 +125,7 @@ class DiffPrepExperiment(object):
         return result, best_model, logger
 
 def run_diffprep(data_dir, dataset, result_dir, prep_space, params, model_name, method):
-    print("Dataset:", dataset, "Diff Method:", params["diff_method"], method)
+    print("Dataset:", dataset, "Task:", params["task"], "Diff Method:", params["diff_method"], method)
 
     sample = "sample" if params["sample"] else "nosample"
     diff_prep_exp = DiffPrepExperiment(data_dir, dataset, prep_space, model_name, method)

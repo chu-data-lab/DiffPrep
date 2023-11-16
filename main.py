@@ -11,10 +11,11 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--dataset', default=None)
 parser.add_argument('--data_dir', default="data")
 parser.add_argument('--result_dir', default="result")
-parser.add_argument('--model', default="log", choices=["log", "two"])
+parser.add_argument('--model', default="log", choices=["log", "two", "reg"])
 parser.add_argument('--method',  default="diffprep_fix", choices=["default", "random", "diffprep_fix", "diffprep_flex"])
 parser.add_argument('--train_seed', default=1, type=int)
 parser.add_argument('--split_seed', default=1, type=int)
+parser.add_argument('--task', default="classification", choices=["classification", "regression"])
 args = parser.parse_args()
 
 # define hyper parameters
@@ -33,7 +34,8 @@ params = {
     "logging": False,
     "no_crash": False,
     "patience": 3,
-    "momentum": 0.9
+    "momentum": 0.9,
+    "task": args.task
 }
 
 auto_prep_params = {

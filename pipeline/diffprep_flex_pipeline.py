@@ -497,7 +497,7 @@ class DiffPrepFlexPipeline(nn.Module):
                 # forward
                 X_output_i += transformer(X_output, is_fit, X_type, max_only=max_only, require_grad=require_grad, alpha=self.alpha_probs[:, i, j])
                 cur_idx += 1
-                
+
                 # print(X_output_i.max())
 
             X_output = X_output_i
