@@ -36,8 +36,8 @@ class DiffPrepExperiment(object):
         if params["task"] == "regression":
             y_train, y_val, y_test = min_max_y(y_train), min_max_y(y_val), min_max_y(y_test)
 
-        params["patience"] = 2
-        params["num_epochs"] = 10
+        params["patience"] = 10
+        params["num_epochs"] = 3000
         
         # set random seed
         set_random_seed(params)
