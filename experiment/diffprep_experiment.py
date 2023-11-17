@@ -36,8 +36,8 @@ class DiffPrepExperiment(object):
         if params["task"] == "regression":
             y_train, y_val, y_test = min_max_y(y_train), min_max_y(y_val), min_max_y(y_test)
 
-        params["patience"] = 10
-        params["num_epochs"] = 3000
+        params["patience"] = 2
+        params["num_epochs"] = 10
         
         # set random seed
         set_random_seed(params)
@@ -76,6 +76,7 @@ class DiffPrepExperiment(object):
             print(input_dim)
             model = torch.nn.Sequential(torch.nn.Linear(input_dim, 4),
                                         torch.nn.GELU(),
+                                        nn.Dropout(p=0.2),
                                         torch.nn.Linear(4, 1))
         else:
             raise Exception("Wrong model")

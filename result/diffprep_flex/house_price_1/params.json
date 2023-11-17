@@ -1,7 +1,7 @@
 {
     "num_epochs": 10,
     "batch_size": 512,
-    "device": "cpu",
+    "device": "cuda",
     "weight_decay": 0,
     "model": "reg",
     "train_seed": 1,
