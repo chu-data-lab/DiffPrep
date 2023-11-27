@@ -21,7 +21,7 @@ args = parser.parse_args()
 # define hyper parameters
 params = {
     "num_epochs": 2000,
-    "batch_size": 256,
+    "batch_size": 512,
     "device": "cuda",
     "model_lr": [0.1, 0.01, 0.001],
     # "model_lr": [0.01],
