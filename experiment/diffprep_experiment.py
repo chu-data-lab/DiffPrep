@@ -185,4 +185,4 @@ def save_lr_and_pipelines(lr, pipeline_dict, save_dir):
             f.write(key + ": ")
             f.write(str(value))
             f.write("\n")
-        f.write(pipeline_dict['alpha'])
+        f.write(str(pipeline_dict['alpha']))
